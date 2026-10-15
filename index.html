@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101a2c">
+  <title>SleepTrack — Your Sleep, Understood</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: #0b1220; color: #f1f5f9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .layout { max-width: 1100px; margin: auto; padding: 28px 20px 50px; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap; }
+    .brand { font-size: 23px; font-weight: 750; letter-spacing: -.7px; }
+    .brand span { color: #5eead4; }
+    .status { color: #fbbf24; background: #332a19; padding: 9px 13px; border-radius: 30px; font-size: 12px; }
+    .intro { margin: 45px 0 26px; }
+    .eyebrow { color: #5eead4; text-transform: uppercase; letter-spacing: 2px; font-size: 11px; font-weight: 700; }
+    h1 { font-size: clamp(30px, 5vw, 45px); letter-spacing: -1.5px; margin: 10px 0; }
+    .muted { color: #9caac0; line-height: 1.65; }
+    .notice { background: #14263a; border: 1px solid #29435b; border-radius: 14px; padding: 16px; margin: 24px 0; line-height: 1.6; font-size: 14px; }
+    .notice strong { color: #5eead4; }
+    .section-title { font-size: 17px; margin: 30px 0 14px; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; }
+    .card { background: #121d2e; border: 1px solid #26354a; border-radius: 17px; padding: 21px; min-height: 150px; }
+    .label { color: #a8b5c8; font-size: 13px; }
+    .value { font-size: 25px; font-weight: 700; margin: 19px 0 7px; }
+    .empty { font-size: 13px; color: #8292a9; }
+    .panel { background: #121d2e; border: 1px solid #26354a; border-radius: 17px; padding: 22px; }
+    .chart { height: 135px; display: flex; align-items: center; justify-content: center; border: 1px dashed #34445a; border-radius: 12px; margin-top: 15px; text-align: center; padding: 18px; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; }
+    .step { background: #121d2e; border-radius: 14px; padding: 17px; border: 1px solid #26354a; }
+    .number { color: #5eead4; font-weight: 800; font-size: 12px; }
+    .step h3 { font-size: 15px; margin-bottom: 8px; }
+    .step p { color: #9caac0; font-size: 13px; line-height: 1.6; }
+    footer { border-top: 1px solid #26354a; margin-top: 35px; padding-top: 20px; color: #8292a9; font-size: 12px; line-height: 1.7; }
+    @media (max-width: 700px) {
+      .grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .intro { margin-top: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <header>
+      <div class="brand">☾ Sleep<span>Track</span></div>
+      <div class="status">● Wristband not connected</div>
+    </header>
+
+    <section class="intro">
+      <div class="eyebrow">Your personal sleep dashboard</div>
+      <h1>Understand your nights.</h1>
+      <p class="muted">Your sleep data, in one calm and private space.</p>
+      <p class="muted" id="today"></p>
+    </section>
+
+    <div class="notice">
+      <strong>Welcome to your SleepTrack prototype.</strong><br>
+      Your dashboard is ready. No sensor has connected yet, so measurements are intentionally blank. Once your wristband is connected, this space can display recorded readings.
+    </div>
+
+    <h2 class="section-title">Your latest readings</h2>
+    <section class="grid">
+      <div class="card">
+        <div class="label">Sleep duration</div>
+        <div class="value">—</div>
+        <div class="empty">Waiting for a recorded session</div>
+      </div>
+      <div class="card">
+        <div class="label">Heart rate</div>
+        <div class="value">— <span style="font-size:14px">BPM</span></div>
+        <div class="empty">Waiting for sensor data</div>
+      </div>
+      <div class="card">
+        <div class="label">Blood oxygen estimate</div>
+        <div class="value">— <span style="font-size:14px">%</span></div>
+        <div class="empty">Waiting for compatible sensor data</div>
+      </div>
+    </section>
+
+    <h2 class="section-title">Sleep trends</h2>
+    <section class="panel">
+      <strong>Sleep history</strong>
+      <div class="chart">
+        <p class="muted">Your chart will appear here after real readings are recorded and connected.<br>No sample data is being presented as your personal results.</p>
+      </div>
+    </section>
+
+    <h2 class="section-title">Your next steps</h2>
+    <section class="steps">
+      <div class="step">
+        <div class="number">STEP 01</div>
+        <h3>Build the wristband</h3>
+        <p>Assemble and test the ESP32 and compatible sensors safely.</p>
+      </div>
+      <div class="step">
+        <div class="number">STEP 02</div>
+        <h3>Connect the data</h3>
+        <p>Program the wristband to send readings securely over Wi-Fi.</p>
+      </div>
+      <div class="step">
+        <div class="number">STEP 03</div>
+        <h3>Show real results</h3>
+        <p>Connect a protected database and display actual recorded measurements.</p>
+      </div>
+    </section>
+
+    <footer>
+      SleepTrack is an experimental educational project, not a medical device.
+      Wrist-worn sensors cannot reliably diagnose sleep apnea or insomnia.
+      Do not use this prototype to make medical decisions.
+    </footer>
+  </main>
+  <script>
+    document.getElementById("today").textContent =
+      new Date().toLocaleDateString(undefined, {
+        weekday: "long", year: "numeric", month: "long", day: "numeric"
+      });
+  </script>
+</body>
+</html>
