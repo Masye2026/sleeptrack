@@ -1,0 +1,400 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SleepTrack ✦ Your softer nights</title>
+<style>
+:root {
+  --bg:#171128;
+  --panel:rgba(255,255,255,.075);
+  --line:rgba(255,255,255,.14);
+  --text:#fcf8ff;
+  --muted:#c5bad9;
+  --accent:#d8c0ff;
+}
+*{box-sizing:border-box}
+body {
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:radial-gradient(ellipse at top,#493469,var(--bg) 65%);
+  color:var(--text);
+  min-height:100vh;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{
+  outline:2px solid #e5d4ff;outline-offset:3px
+}
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:220px;padding:24px 14px;
+  border-right:1px solid var(--line);
+  background:#17112899;position:fixed;inset:0 auto 0 0;
+  display:flex;flex-direction:column;gap:22px;z-index:5
+}
+.brand{font-weight:bold;letter-spacing:2px;padding:8px}
+.brand span{color:var(--accent)}
+.nav{display:grid;gap:7px}
+.nav button{
+  text-align:left;color:var(--muted);background:transparent;
+  border:1px solid transparent;border-radius:12px;
+  padding:12px;font-size:13px
+}
+.nav button:hover,.nav button.active{
+  color:var(--text);background:var(--panel);border-color:var(--line)
+}
+.main{margin-left:220px;width:calc(100% - 220px);padding:28px;max-width:1500px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:12px}
+button,.pill{border-radius:12px}
+.btn,.primary,.ghost{
+  padding:11px 14px;border:1px solid var(--line);
+  color:var(--text);background:var(--panel)
+}
+.primary{background:linear-gradient(110deg,#e9d3ff,#c6d7ff);color:#302345;border:0;font-weight:bold}
+.page{display:none;animation:fade .25s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:none}}
+h1{font-size:clamp(30px,4vw,48px);letter-spacing:-1.5px;margin:12px 0}
+h2{font-size:21px;margin:0 0 10px}
+h3{font-size:15px}
+p{line-height:1.65}
+.muted{color:var(--muted);font-size:13px}
+.eyebrow{font-size:10px;letter-spacing:2px;color:var(--accent);font-weight:bold}
+.hero,.card{
+  border:1px solid var(--line);background:var(--panel);
+  border-radius:23px;padding:22px;margin-bottom:15px;
+  box-shadow:0 15px 45px #00000012
+}
+.hero{padding:32px;background:linear-gradient(120deg,#a58ae82a,#8ca7ef18,#f1c6e51a)}
+.hero-flex{display:flex;justify-content:space-between;align-items:center;gap:18px}
+.moon{font-size:85px;filter:drop-shadow(0 0 25px #d7c4ff77)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.metric{font-size:28px;font-weight:bold;margin:16px 0}
+.pill{display:inline-block;padding:7px 10px;border:1px solid var(--line);font-size:11px;color:var(--muted)}
+.field{display:grid;gap:7px;margin:13px 0}
+.field label{font-size:12px;color:var(--muted)}
+.field input,.field textarea,.field select{
+  width:100%;padding:12px;border-radius:12px;
+  border:1px solid var(--line);background:#201832;color:white
+}
+.field textarea{min-height:110px;resize:vertical}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.spread{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.empty{padding:18px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);font-size:13px}
+.section{margin-top:26px}
+.bar-chart{height:100px;display:flex;gap:9px;align-items:end;margin-top:22px}
+.bar{flex:1;border-radius:9px 9px 2px 2px;background:linear-gradient(#e3caff,#9588e8);opacity:.35}
+.list{display:grid;gap:10px}
+.list-item{padding:13px 0;border-bottom:1px solid var(--line);font-size:13px}
+.hidden{display:none!important}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:20px 0}
+.tabs button{font-size:12px}
+.tabs button.active{background:#dfcbff;color:#302345}
+.worlds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:20px 0}
+.world{
+  background:var(--panel);color:var(--text);border:1px solid var(--line);
+  padding:16px 10px;text-align:left;border-radius:16px
+}
+.world.active{border-color:#e3caff;background:#d9c3ff24}
+.world span{display:block;font-size:28px;margin-bottom:9px}
+.world strong{font-size:12px}
+.world small{display:block;color:var(--muted);margin-top:5px;font-size:10px}
+.void{
+  background:radial-gradient(ellipse at 70% 0%,#b6a4ff24,transparent 60%),var(--panel);
+  text-align:center;padding:28px
+}
+.orb{
+  width:135px;height:135px;margin:22px auto;border-radius:50%;
+  display:grid;place-items:center;font-size:44px;
+  background:radial-gradient(circle at 35% 30%,#fff,#d7bdff 20%,#8c7eea 55%,#4d3b8222 75%);
+  box-shadow:0 0 45px #d7bdff35;
+  animation:float 5s ease-in-out infinite
+}
+@keyframes float{50%{transform:translateY(-8px) scale(1.04)}}
+.breath{
+  width:175px;height:175px;margin:25px auto;border-radius:50%;
+  display:grid;place-items:center;text-align:center;
+  background:radial-gradient(circle,#fff3ff,#c8b0ff 45%,#9d8df422 72%);
+  transition:transform 4s ease-in-out
+}
+.breath.in{transform:scale(1.12)}
+.breath.out{transform:scale(.88)}
+.post-art{
+  min-height:220px;border-radius:17px;padding:20px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  background:radial-gradient(ellipse at center,#d2b6ff55,transparent 60%),linear-gradient(145deg,#493263,#282750,#695487)
+}
+.post-art.sea{background:radial-gradient(ellipse at center,#70d5dc66,transparent 60%),linear-gradient(145deg,#173f5b,#303362)}
+.post-art.sunset{background:radial-gradient(ellipse at center,#ffb7c766,transparent 60%),linear-gradient(145deg,#754164,#3b2d62)}
+.post-art.clouds{background:radial-gradient(ellipse at center,#d4e1ff77,transparent 60%),linear-gradient(145deg,#3e4d80,#5d507f)}
+.post-art h3{font-size:21px;margin:8px 0}
+.post-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.post-actions button{font-size:11px}
+.mobile-nav{display:none}
+small.note{color:var(--muted);line-height:1.6}
+@media(max-width:1000px){
+ .sidebar{width:75px;padding:15px 8px}
+ .brand{font-size:0;text-align:center}
+ .brand span{font-size:21px}
+ .nav button{text-align:center;font-size:0;padding:12px 4px}
+ .nav button::first-letter{font-size:18px}
+ .main{margin-left:75px;width:calc(100% - 75px)}
+ .grid.four{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:650px){
+ .sidebar{display:none}
+ .main{margin:0;width:100%;padding:17px 13px 85px}
+ .grid,.grid.three,.grid.four{grid-template-columns:1fr}
+ .worlds{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .hero{padding:22px}
+ .moon{font-size:55px}
+ .mobile-nav{
+  display:flex;position:fixed;bottom:0;left:0;right:0;z-index:10;
+  justify-content:space-around;padding:10px 3px;
+  background:#171128ee;border-top:1px solid var(--line)
+ }
+ .mobile-nav button{background:none;border:0;color:var(--muted);font-size:10px;padding:4px}
+ .mobile-nav button span{display:block;font-size:19px;margin-bottom:4px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+ <div class="brand"><span>☾</span> SLEEPTRACK</div>
+ <div class="nav">
+  <button class="active" data-page="overview">⌂ Overview</button>
+  <button data-page="sleep">☾ Sleep</button>
+  <button data-page="heart">♡ Heart & oxygen</button>
+  <button data-page="insights">✧ Insights</button>
+  <button data-page="journal">▤ Journal</button>
+ </div>
+ <div class="eyebrow">EXPLORE</div>
+ <div class="nav">
+  <button data-page="discover">▷ Discover</button>
+  <button data-page="void">✦ The Void</button>
+  <button data-page="wristband">◉ My wristband</button>
+  <button data-page="settings">⚙ Settings</button>
+ </div>
+</aside>
+<main class="main">
+ <div class="topbar">
+  <div class="eyebrow">SLEEPTRACK / <span id="crumb">OVERVIEW</span></div>
+  <div class="row"><button class="btn" id="theme">☼ Theme</button><button class="btn" data-go="settings" id="profile-button">My profile</button></div>
+ </div>
+
+ <section class="page active" id="overview">
+  <div class="hero"><div class="hero-flex"><div><div class="eyebrow">YOUR PERSONAL SLEEP SPACE</div><h1>Good evening,<br><span id="hello">Sleep Explorer</span> ✨</h1><p class="muted">Your nights don't have to be perfect. Let's build little habits that help you feel more rested.</p><div class="row"><button class="primary" data-go="journal">＋ Morning check-in</button><button class="ghost" data-go="void">Release a worry ↗</button></div></div><div class="moon">☾</div></div></div>
+  <div class="section"><div class="spread"><h2>Your sleep at a glance</h2><span class="pill">No device connected</span></div><p class="muted">Real measurements appear when a compatible device is connected.</p></div>
+  <div class="grid four">
+   <div class="card"><div class="muted">Sleep duration</div><div class="metric">— —</div><small class="note">Waiting for a sleep session</small></div>
+   <div class="card"><div class="muted">Time to fall asleep</div><div class="metric">— —</div><small class="note">No estimate available yet</small></div>
+   <div class="card"><div class="muted">How rested you feel</div><div class="metric" id="rested">— —</div><small class="note">Add a morning check-in</small></div>
+   <div class="card"><div class="muted">Wristband</div><div class="metric" style="font-size:20px">Not connected</div><small class="note">No invented readings</small></div>
+  </div>
+  <div class="grid section">
+   <div class="card"><h2>Your week</h2><p class="muted">Your chart will fill in when real sleep data is available.</p><div class="bar-chart"><div class="bar" style="height:15%"></div><div class="bar" style="height:15%"></div><div class="bar" style="height:15%"></div><div class="bar" style="height:15%"></div><div class="bar" style="height:15%"></div><div class="bar" style="height:15%"></div><div class="bar" style="height:15%"></div></div><div class="empty">No sleep sessions recorded yet.</div></div>
+   <div class="card"><h2>Small things for tonight</h2><div class="list"><div class="list-item">☁ Ease into bedtime <button class="ghost" data-go="discover">Explore</button></div><div class="list-item">✎ Clear your mind <button class="ghost" data-go="void">Open The Void</button></div><div class="list-item">☾ Write a check-in <button class="ghost" data-go="journal">Open journal</button></div></div></div>
+  </div>
+ </section>
+
+ <section class="page" id="sleep">
+  <div class="eyebrow">YOUR NIGHT, OVER TIME</div><h1>Sleep</h1><p class="muted">Understand patterns without pressure. Measurements stay blank until real data is connected.</p>
+  <div class="grid three section"><div class="card">Total sleep<div class="metric">— —</div><small class="note">No session recorded</small></div><div class="card">Sleep onset<div class="metric">— —</div><small class="note">No estimate available</small></div><div class="card">Awakenings<div class="metric">— —</div><small class="note">No data available</small></div></div>
+  <div class="grid section"><div class="card"><h2>Sleep timeline</h2><div class="empty">Connect a supported data source to see a nightly timeline.</div></div><div class="card"><h2>Sleep goals</h2><div class="field"><label>Usual bedtime</label><input id="bedtime" type="time" value="22:30"></div><div class="field"><label>Wake-up goal</label><input id="waketime" type="time" value="07:00"></div><button class="primary" id="save-goals">Save goals</button></div></div>
+ </section>
+
+ <section class="page" id="heart">
+  <div class="eyebrow">BODY SIGNALS</div><h1>Heart & oxygen</h1><p class="muted">This space will show sensor measurements when supported hardware is connected.</p>
+  <div class="grid section"><div class="card"><h2>♡ Heart rate</h2><div class="metric">— bpm</div><div class="empty">Waiting for verified sensor readings.</div></div><div class="card"><h2>◌ Blood oxygen (SpO₂)</h2><div class="metric">— %</div><div class="empty">No readings available. A wristband cannot diagnose or rule out sleep apnea.</div></div></div>
+  <div class="card section"><h2>Understanding your readings</h2><p class="muted">Wearable readings can be affected by fit, movement, circulation and sensor limitations. Use them as context, not a diagnosis. Discuss medical concerns with a qualified healthcare professional.</p></div>
+ </section>
+
+ <section class="page" id="insights">
+  <div class="eyebrow">GENTLE PATTERNS, NOT JUDGMENT</div><h1>Insights</h1><p class="muted">Explore patterns between your sleep, routines, and how you feel.</p>
+  <div class="grid section"><div class="card"><h2>Weekly reflection</h2><div class="empty">Add check-ins and connect a supported device to begin seeing personal patterns.</div></div><div class="card"><h2>Future sleep coach</h2><p class="muted">This prototype doesn't connect to an AI service yet.</p><div class="list"><button class="ghost" data-coach="Try a realistic bedtime routine">Help me build a bedtime routine</button><button class="ghost" data-coach="Think about why I feel tired">Why might I feel tired?</button><button class="ghost" data-coach="Prepare questions for my doctor">What should I ask my doctor?</button></div><p id="coach-answer" class="muted"></p></div></div>
+ </section>
+
+ <section class="page" id="journal">
+  <div class="eyebrow">A MOMENT FOR YOURSELF</div><h1>Sleep journal</h1><p class="muted">Entries are stored in this browser on this device in this prototype.</p>
+  <div class="grid section"><div class="card"><h2>Morning check-in</h2><div class="field"><label>How rested do you feel?</label><select id="mood"><option value="">Choose one</option><option>Very rested</option><option>Mostly rested</option><option>Okay</option><option>Tired</option><option>Exhausted</option></select></div><div class="field"><label>Notes (optional)</label><textarea id="journal-text" placeholder="Dreams, mood, routines, or anything you want to remember…"></textarea></div><button class="primary" id="save-journal">Save check-in</button><p class="muted">For thoughts you want to release without saving, use The Void.</p></div><div class="card"><div class="spread"><h2>Recent entries</h2><button class="ghost" id="clear-journal">Delete all</button></div><div id="journal-list" class="list"></div></div></div>
+ </section>
+
+ <section class="page" id="discover">
+  <div class="eyebrow">LEARN SOMETHING GENTLE</div><h1>Discover ✧</h1><p class="muted">Short tips, calming routines, and community ideas. Sample cards below are educational placeholders, not a live video network.</p>
+  <div class="tabs" id="filters"><button class="btn active" data-filter="All">For You</button><button class="btn" data-filter="Sleep Habits">Sleep Habits</button><button class="btn" data-filter="Relaxation">Relaxation</button><button class="btn" data-filter="Sleep Science">Sleep Science</button><button class="btn" data-filter="Community">Community</button></div>
+  <div class="grid section"><div><div id="feed" class="list"></div></div><div><div class="card"><h2>Share a little kindness</h2><p class="muted">Create a sleep tip for your local demo feed.</p><button class="primary" id="open-post">＋ Create a post</button></div><div class="card"><h2>Saved tips</h2><div id="saved-list" class="list"></div></div><div class="card"><h2>Community safety</h2><p class="muted">No bullying, harassment, hate, threats, doxxing, scams, or dangerous health misinformation. Never share someone else's private information.</p><p class="muted">A real community needs reporting, blocking, appeals, age protections, and human moderation.</p></div></div></div>
+ </section>
+
+ <section class="page" id="void">
+  <div class="eyebrow">THE VOID · YOUR PRIVATE SANCTUARY</div><h1>Where would you like<br>to drift tonight?</h1><p class="muted">You choose your dreamscape. Release a worry or nightmare, then breathe at your own pace.</p>
+  <div class="worlds" id="worlds">
+   <button class="world active" data-world="space"><span>🌌</span><strong>Cosmic Drift</strong><small>Release into the stars</small></button>
+   <button class="world" data-world="sea"><span>🌊</span><strong>Ocean of Calm</strong><small>Let the waves carry it</small></button>
+   <button class="world" data-world="sunset"><span>🌅</span><strong>Last Light</strong><small>Let the day settle</small></button>
+   <button class="world" data-world="clouds"><span>☁️</span><strong>Cloud Nine</strong><small>Drift above it all</small></button>
+  </div>
+  <div class="card void" id="write-panel"><div class="eyebrow">LET IT OUT</div><h2>What's on your mind tonight?</h2><p class="muted">A worry, a nightmare, tomorrow's to-do list — you don't have to explain it perfectly.</p><div class="field"><textarea id="worry" maxlength="3000" placeholder="You can leave your thoughts here…"></textarea></div><div class="row" style="justify-content:center"><button class="primary" id="release">✧ Release into the Void</button><button class="ghost" id="clear-worry">Clear</button></div><p class="muted">Your text is not sent to a server in this prototype. Release clears the text box, but this is not a guarantee of secure deletion from device memory or browser tools.</p></div>
+  <div class="card void hidden" id="released"><div class="orb" id="release-icon">✧</div><h2 id="release-title">You can leave it here for tonight.</h2><p class="muted" id="release-message">You don't have to solve everything tonight.</p><div class="row" style="justify-content:center"><button class="primary" id="go-breathe">Breathe with the stars</button><button class="ghost" id="write-again">Write something else</button></div></div>
+  <div class="card void hidden" id="breath-panel"><div class="breath" id="breath-orb"><span id="breath-label">Ready?</span></div><h2>Follow the light</h2><p class="muted" id="breath-help">Breathe comfortably. No need to force a deep breath or hold it.</p><div class="row" style="justify-content:center"><button class="primary" id="start-breath">Start breathing</button><button class="ghost" id="pause-breath">Pause</button></div><p class="muted">Skip any time. If focusing on breathing feels uncomfortable, simply relax and look around the scene.</p></div>
+ </section>
+
+ <section class="page" id="wristband">
+  <div class="eyebrow">YOUR COMPANION DEVICE</div><h1>My wristband</h1><p class="muted">Device pairing and live sensor data are not connected in this prototype.</p>
+  <div class="grid section"><div class="card"><h2>◉ SleepTrack band</h2><div class="metric" style="font-size:22px">Not connected</div><p class="muted">A future version can show battery, connection, and last sync time.</p><button class="primary" id="pair">Set up device</button></div><div class="card"><h2>Before your first night</h2><div class="list"><div class="list-item">1. Charge your band</div><div class="list-item">2. Fit it comfortably</div><div class="list-item">3. Confirm your data is syncing</div></div></div></div>
+ </section>
+
+ <section class="page" id="settings">
+  <div class="eyebrow">MAKE IT YOURS</div><h1>Settings</h1><p class="muted">Preferences stay in this browser in the prototype.</p>
+  <div class="grid section"><div class="card"><h2>Your profile</h2><div class="field"><label>Display name</label><input id="display-name" maxlength="40" placeholder="Sleep Explorer"></div><div class="field"><label>Email (demo only)</label><input id="email" type="email" placeholder="you@example.com"></div><button class="primary" id="save-profile">Save profile</button><p class="muted">No account is created; secure login needs a backend.</p></div><div class="card"><h2>Preferences & privacy</h2><div class="list"><div class="spread list-item"><span>Gentle reminder preference</span><input type="checkbox" id="reminders"></div><div class="spread list-item"><span>Reduce motion</span><input type="checkbox" id="reduced-motion"></div><div class="spread list-item"><span>Private by default</span><span class="pill">Recommended</span></div></div><div class="row section"><button class="ghost" id="export">Export my local data</button><button class="ghost" id="delete-data">Delete local data</button></div></div></div>
+ </section>
+</main>
+</div>
+
+<nav class="mobile-nav">
+ <button data-page="overview"><span>⌂</span>Home</button>
+ <button data-page="discover"><span>▷</span>Discover</button>
+ <button data-page="void"><span>✦</span>The Void</button>
+ <button data-page="journal"><span>▤</span>Journal</button>
+ <button data-page="settings"><span>⚙</span>Settings</button>
+</nav>
+
+<div id="modal" class="hidden" style="position:fixed;inset:0;z-index:30;background:#080613cc;display:flex;align-items:center;justify-content:center;padding:15px">
+ <div class="card" style="width:min(560px,100%);background:#211832">
+  <div class="spread"><h2>Create a post</h2><button class="ghost" id="close-modal">✕</button></div>
+  <p class="muted">Your post appears in this browser only. It is not shared with other users.</p>
+  <div class="field"><label>Title</label><input id="post-title" maxlength="90" placeholder="A small thing that helps me wind down"></div>
+  <div class="field"><label>Your tip</label><textarea id="post-body" maxlength="1200" placeholder="Share something kind and useful…"></textarea></div>
+  <div class="field"><label>Category</label><select id="post-category"><option>Sleep Habits</option><option>Relaxation</option><option>Sleep Science</option><option>Community</option></select></div>
+  <button class="primary" id="publish">Preview post in my feed</button>
+ </div>
+</div>
+<div id="toast" style="position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#eadcff;color:#302345;border-radius:99px;padding:12px 18px;display:none;z-index:50;font-size:13px;font-weight:bold" role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+const get=(k,f)=>{try{let v=localStorage.getItem('sleeptrack_'+k);return v===null?f:JSON.parse(v)}catch{return f}};
+const put=(k,v)=>{try{localStorage.setItem('sleeptrack_'+k,JSON.stringify(v))}catch{}};
+const del=k=>localStorage.removeItem('sleeptrack_'+k);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let entries=get('journal',[]),posts=get('posts',[]),saved=get('saved',[]),likes=get('likes',[]),filter='All';
+let world=get('world','space'),phaseTimer=null,toastTimer=null;
+function toast(s){const t=$('#toast');t.textContent=s;t.style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.style.display='none',2300)}
+function go(id){
+ if(!$(`#${id}`))return;
+ $$('.page').forEach(p=>p.classList.toggle('active',p.id===id));
+ $$('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+ $('#crumb').textContent=id.replace('-',' ').toUpperCase();
+ window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+ if(id==='discover')renderFeed();
+}
+$$('[data-page]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));
+$$('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
+$('#theme').onclick=()=>document.body.classList.toggle('light');
+const profile=get('profile',{name:'Sleep Explorer',email:''});
+$('#display-name').value=profile.name||'';
+$('#email').value=profile.email||'';
+function showName(){const n=profile.name||'Sleep Explorer';$('#hello').textContent=n;$('#profile-button').textContent=n}
+showName();
+$('#save-profile').onclick=()=>{profile.name=$('#display-name').value.trim()||'Sleep Explorer';profile.email=$('#email').value;put('profile',profile);showName();toast('Profile saved in this browser')};
+$('#save-goals').onclick=()=>{put('goals',{bed:$('#bedtime').value,wake:$('#waketime').value});toast('Sleep goals saved')};
+$('#reminders').checked=get('reminders',false);
+$('#reminders').onchange=e=>put('reminders',e.target.checked);
+$('#reduced-motion').checked=get('reduced-motion',false);
+$('#reduced-motion').onchange=e=>{put('reduced-motion',e.target.checked);document.documentElement.style.scrollBehavior=e.target.checked?'auto':'smooth';toast('Motion preference saved')};
+function renderJournal(){
+ const host=$('#journal-list');
+ if(!entries.length){host.innerHTML='<div class="empty">Your saved check-ins will appear here.</div>';return}
+ host.innerHTML=entries.map(e=>`<div class="list-item"><strong>${esc(e.mood||'Journal note')}</strong><p class="muted">${esc(e.date)}<br>${esc(e.notes)}</p><button class="ghost" data-remove="${e.id}">Delete entry</button></div>`).join('');
+ $$('[data-remove]').forEach(b=>b.onclick=()=>{entries=entries.filter(e=>e.id!==Number(b.dataset.remove));put('journal',entries);renderJournal()});
+}
+$('#save-journal').onclick=()=>{
+ const mood=$('#mood').value,notes=$('#journal-text').value.trim();
+ if(!mood&&!notes){toast('Add a check-in or note first');return}
+ entries.unshift({id:Date.now(),date:new Date().toLocaleString(),mood,notes});put('journal',entries);
+ $('#mood').value='';$('#journal-text').value='';$('#rested').textContent=mood||'Added';renderJournal();toast('Check-in saved locally');
+};
+$('#clear-journal').onclick=()=>{if(confirm('Delete all journal entries saved in this browser?')){entries=[];put('journal',entries);renderJournal();toast('Journal cleared')}};
+renderJournal();
+
+const samples=[
+{id:'s1',title:'Give your body a steady wake-up cue',category:'Sleep Habits',symbol:'☀',art:'',body:'A consistent wake-up time can help support your body clock. Choose a realistic time you can keep most days.'},
+{id:'s2',title:'When your mind replays the day',category:'Relaxation',symbol:'☁',art:'clouds',body:'Write tomorrow’s tasks down before bed, then choose one small next step for the morning.'},
+{id:'s3',title:'What a sleep tracker can tell you',category:'Sleep Science',symbol:'✧',art:'',body:'Patterns can offer clues, but a wearable estimate is not a diagnosis. Compare trends with how you feel.'},
+{id:'s4',title:'A softer bedtime transition',category:'Relaxation',symbol:'☾',art:'sunset',body:'Dim bright lights if practical, choose a quiet activity, and give yourself permission to slow down.'},
+{id:'s5',title:'When to ask about sleep apnea',category:'Sleep Science',symbol:'♡',art:'sea',body:'Loud snoring, gasping, breathing pauses, or daytime sleepiness are worth discussing with a healthcare professional.'}
+];
+function allPosts(){return [...posts,...samples]}
+function renderFeed(){
+ const list=$('#feed');let items=allPosts();
+ if(filter!=='All')items=items.filter(p=>p.category===filter);
+ if(!items.length){list.innerHTML='<div class="empty">No posts here yet. You can create a tip.</div>';return}
+ list.innerHTML=items.map(p=>`<article class="card"><div class="post-art ${p.art||''}"><span class="pill">${esc(p.category)}</span><div style="font-size:50px;text-align:center">${esc(p.symbol||'✧')}</div><div><span class="pill">SleepTrack Discover</span><h3>${esc(p.title)}</h3><p>${esc(p.body)}</p></div></div><div class="post-actions"><button class="ghost" data-like="${esc(p.id)}">${likes.includes(p.id)?'♥ Liked':'♡ Like'}</button><button class="ghost" data-save="${esc(p.id)}">${saved.includes(p.id)?'▣ Saved':'▢ Save tip'}</button><button class="ghost" data-share="${esc(p.id)}">↗ Share</button><button class="ghost" data-report="${esc(p.id)}">⚑ Report</button></div><small class="note">${p.local?'Your local demo post':'Sample educational content'} · No live users connected</small></article>`).join('');
+ $$('[data-like]').forEach(b=>b.onclick=()=>{const id=b.dataset.like;likes=likes.includes(id)?likes.filter(x=>x!==id):[...likes,id];put('likes',likes);renderFeed()});
+ $$('[data-save]').forEach(b=>b.onclick=()=>{const id=b.dataset.save;saved=saved.includes(id)?saved.filter(x=>x!==id):[...saved,id];put('saved',saved);renderFeed();renderSaved();toast('Saved tips updated')});
+ $$('[data-share]').forEach(b=>b.onclick=()=>{const p=allPosts().find(x=>x.id===b.dataset.share);if(navigator.share)navigator.share({title:p.title,text:p.body}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(p.title+' — '+p.body).then(()=>toast('Tip copied')).catch(()=>toast('Sharing needs an app backend'));else toast('Sharing needs an app backend')});
+ $$('[data-report]').forEach(b=>b.onclick=()=>toast('Demo only: reporting needs a moderation backend'));
+}
+function renderSaved(){const host=$('#saved-list'),items=allPosts().filter(p=>saved.includes(p.id));host.innerHTML=items.length?items.map(p=>`<div class="list-item">${esc(p.title)}</div>`).join(''):'<div class="empty">Nothing saved yet.</div>'}
+$$('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;$$('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));renderFeed()});
+$('#open-post').onclick=()=>$('#modal').classList.remove('hidden');
+$('#close-modal').onclick=()=>$('#modal').classList.add('hidden');
+$('#modal').onclick=e=>{if(e.target===$('#modal'))$('#modal').classList.add('hidden')};
+$('#publish').onclick=()=>{
+ const title=$('#post-title').value.trim(),body=$('#post-body').value.trim();
+ if(!title||!body){toast('Add a title and tip first');return}
+ posts.unshift({id:'u'+Date.now(),title,body,category:$('#post-category').value,symbol:'✧',local:true});
+ put('posts',posts);$('#post-title').value='';$('#post-body').value='';$('#modal').classList.add('hidden');renderFeed();toast('Added to your local feed');
+};
+renderFeed();renderSaved();
+
+const worlds={
+ space:{icon:'✧',title:'You can leave it among the stars.',message:"You don't have to solve everything tonight.",button:'Breathe with the stars'},
+ sea:{icon:'≈',title:'Let the waves carry it.',message:'For this moment, you can let the water take the weight.',button:'Breathe with the waves'},
+ sunset:{icon:'☼',title:'Let the day come to rest.',message:"The day can be over, even if everything isn't finished.",button:'Breathe with the light'},
+ clouds:{icon:'☁',title:'You can set it down.',message:'Let the thought grow lighter, like a cloud drifting across the sky.',button:'Breathe with the clouds'}
+};
+function setWorld(w){
+ world=w;put('world',w);
+ $$('[data-world]').forEach(b=>b.classList.toggle('active',b.dataset.world===w));
+ $('#release-icon').textContent=worlds[w].icon;
+ $('#release-title').textContent=worlds[w].title;
+ $('#release-message').textContent=worlds[w].message;
+ $('#go-breathe').textContent=worlds[w].button;
+}
+$$('[data-world]').forEach(b=>b.onclick=()=>setWorld(b.dataset.world));setWorld(world);
+$('#clear-worry').onclick=()=>{$('#worry').value='';$('#worry').focus()};
+$('#release').onclick=()=>{
+ // The worry text is deliberately not saved or transmitted.
+ $('#worry').value='';stopBreathing();
+ $('#write-panel').classList.add('hidden');$('#released').classList.remove('hidden');$('#breath-panel').classList.add('hidden');
+};
+$('#write-again').onclick=()=>{stopBreathing();$('#released').classList.add('hidden');$('#breath-panel').classList.add('hidden');$('#write-panel').classList.remove('hidden');$('#worry').focus()};
+$('#go-breathe').onclick=()=>{$('#breath-panel').classList.remove('hidden');$('#breath-panel').scrollIntoView({behavior:'smooth',block:'start'})};
+function stopBreathing(){if(phaseTimer)clearTimeout(phaseTimer);phaseTimer=null;$('#breath-orb').classList.remove('in','out');$('#breath-label').textContent='Ready?';$('#breath-help').textContent='Breathe comfortably. No need to force a deep breath or hold it.';$('#start-breath').disabled=false}
+$('#start-breath').onclick=()=>{
+ stopBreathing();$('#start-breath').disabled=true;let inhale=true;
+ function tick(){
+  $('#breath-orb').classList.toggle('in',inhale);$('#breath-orb').classList.toggle('out',!inhale);
+  $('#breath-label').textContent=inhale?'Breathe in':'Breathe out';
+  $('#breath-help').textContent=inhale?'Gently breathe in, only as much as feels comfortable.':'Slowly breathe out. Let your shoulders soften.';
+  const delay=inhale?4000:5000;inhale=!inhale;phaseTimer=setTimeout(tick,delay);
+ }tick();
+};
+$('#pause-breath').onclick=stopBreathing;
+$$('[data-coach]').forEach(b=>b.onclick=()=>{$('#coach-answer').textContent='This future coach could explore “'+b.dataset.coach+'” using your real history. AI coaching is not connected in this prototype.'});
+$('#pair').onclick=()=>toast('Device pairing needs compatible hardware and Bluetooth integration');
+$('#export').onclick=()=>{
+ const blob=new Blob([JSON.stringify({profile,entries,posts,saved},null,2)],{type:'application/json'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='sleeptrack-data.json';a.click();URL.revokeObjectURL(url);
+};
+$('#delete-data').onclick=()=>{if(confirm('Delete SleepTrack prototype data from this browser?')){Object.keys(localStorage).filter(k=>k.startsWith('sleeptrack_')).forEach(del);location.reload()}};
+</script>
+</body>
+</html>
