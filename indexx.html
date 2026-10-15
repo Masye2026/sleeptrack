@@ -1,0 +1,436 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SleepTrack — Your Night, Understood</title>
+<style>
+:root {
+  --bg:#171b2b; --card:#252d45; --text:#faf8ff;
+  --muted:#b8bdd3; --accent:#c4b5fd; --second:#77d8ce;
+  --pink:#ffb7c5; --border:#414862;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:system-ui,-apple-system,sans-serif;
+  transition:background .2s,color .2s;
+}
+body.dreamy{
+  --bg:#15132d;--card:#292344;--accent:#c8a9ff;
+  --second:#8ee6ed;--pink:#ffafd7;--border:#494064;
+}
+body.futuristic{
+  --bg:#080d18;--card:#111e32;--accent:#5ef0ff;
+  --second:#a38bff;--pink:#ff69c8;--border:#254052;
+}
+body.neutral{
+  --bg:#171b2b;--card:#28324a;--accent:#c4b5fd;
+  --second:#77d8ce;--pink:#ffb7b0;--border:#414862;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,
+select:focus-visible{outline:3px solid var(--second);outline-offset:3px}
+.app{display:grid;grid-template-columns:225px 1fr;min-height:100vh}
+aside{padding:24px 15px;border-right:1px solid var(--border)}
+.brand{font-size:23px;font-weight:800;margin-bottom:28px}
+.brand span{color:var(--accent)}
+nav{display:grid;gap:7px}
+nav button,.btn{
+  border:1px solid var(--border);background:var(--card);
+  color:var(--text);padding:12px;border-radius:13px;text-align:left
+}
+nav button.active,nav button:hover{border-color:var(--accent);color:var(--accent)}
+main{padding:30px;max-width:1450px;width:100%;margin:auto}
+header{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:25px}
+h1{font-size:clamp(25px,4vw,38px);margin:3px 0}
+h2{font-size:23px;margin-top:0}
+h3{font-size:16px;margin:0 0 14px}
+p{line-height:1.6}
+.muted{color:var(--muted)}
+.grid{display:grid;gap:16px}
+.stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:20px;min-width:0
+}
+.metric{font-size:29px;font-weight:800;margin:12px 0}
+.badge{font-size:12px;color:var(--second)}
+.page{display:none}
+.page.active{display:block}
+.btn{background:var(--accent);color:#17132b;font-weight:700;text-align:center}
+.btn.secondary{background:var(--card);color:var(--text)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:13px 0}
+.field{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:11px}
+label{display:block;color:var(--muted);font-size:13px;margin:13px 0 6px}
+.empty{border:1px dashed var(--border);border-radius:14px;padding:22px;text-align:center;color:var(--muted)}
+.timeline{display:flex;gap:5px;margin:25px 0}
+.timeline span{height:12px;flex:1;background:var(--bg);border-radius:8px;border:1px solid var(--border)}
+.notice{padding:13px;border-radius:13px;background:var(--bg);color:var(--muted);font-size:13px;margin-top:14px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+footer{color:var(--muted);font-size:12px;padding-top:25px}
+body.large-text{font-size:19px}
+body.reduce-motion,body.reduce-motion *{transition:none!important;animation:none!important}
+@media(max-width:950px){
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .app{grid-template-columns:180px 1fr}
+  main{padding:20px}
+}
+@media(max-width:680px){
+  .app{display:block}
+  aside{padding:12px;border-right:0;border-bottom:1px solid var(--border)}
+  .brand{margin:0 0 10px}
+  nav{display:flex;overflow-x:auto}
+  nav button{white-space:nowrap;padding:9px}
+  main{padding:16px}
+  .two{grid-template-columns:1fr}
+  header{align-items:flex-start;flex-wrap:wrap}
+}
+@media(max-width:390px){.stats{grid-template-columns:1fr}.card{padding:15px}}
+@media print{
+  aside,header,.no-print,footer{display:none}
+  .app{display:block}main{padding:0}
+  .page{display:none!important}.page.active{display:block!important}
+  body{background:white;color:#111}
+  .card{background:white;color:#111;border:1px solid #ddd}
+}
+</style>
+</head>
+<body class="neutral">
+<div class="app">
+<aside>
+  <div class="brand">☾ Sleep<span>Track</span></div>
+  <nav aria-label="Main menu">
+    <button class="active" data-page="overview">✦ Overview</button>
+    <button data-page="sleep">☾ Sleep & Calendar</button>
+    <button data-page="health">♡ Heart & Oxygen</button>
+    <button data-page="device">⌁ My Wristband</button>
+    <button data-page="reports">✧ Reports & Insights</button>
+    <button data-page="journal">☁ Journal & Goals</button>
+    <button data-page="assistant">☄ Sleep Assistant</button>
+    <button data-page="settings">⚙ Settings & Privacy</button>
+  </nav>
+</aside>
+
+<main>
+<header>
+  <div>
+    <div class="muted" id="today"></div>
+    <h1 id="heading">Your night, at your pace ✨</h1>
+  </div>
+  <button class="btn no-print" id="themeButton">Change theme ☾</button>
+</header>
+
+<section class="page active" id="overview">
+  <div class="card" style="margin-bottom:16px">
+    <h2>Welcome to your sleep space 🌙</h2>
+    <p class="muted">Understand your nights. Build gentle routines. No made-up readings.</p>
+  </div>
+  <div class="grid stats">
+    <div class="card"><div>☾ Sleep duration</div><div class="metric">—</div><div class="badge">Waiting for real data</div></div>
+    <div class="card"><div>♡ Heart rate</div><div class="metric">—</div><div class="badge">No readings yet</div></div>
+    <div class="card"><div>✧ Blood oxygen</div><div class="metric">—</div><div class="badge">No readings yet</div></div>
+    <div class="card"><div>◉ Signal quality</div><div class="metric" style="font-size:22px">Unknown</div><div class="badge">Sensor not connected</div></div>
+  </div>
+  <div class="grid two" style="margin-top:16px">
+    <div class="card">
+      <h3>Nightly timeline</h3>
+      <div class="timeline"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="row muted"><span>Bedtime</span><span>Wake-up</span></div>
+      <div class="notice">ⓘ Your timeline will fill with timestamped readings once the wristband is connected. Empty space means missing data, not normal readings.</div>
+    </div>
+    <div class="card">
+      <h3>Wristband connection</h3>
+      <div class="row"><span>Connection</span><span class="badge">● Offline</span></div>
+      <div class="row"><span>Last sync</span><b>—</b></div>
+      <div class="row"><span>Pending uploads</span><b>—</b></div>
+      <button class="btn" data-go="device">Set up wristband →</button>
+    </div>
+  </div>
+  <div class="grid two" style="margin-top:16px">
+    <button class="card" data-go="journal" style="text-align:left;color:var(--text)"><h3>☁ Mood & dream journal</h3><span class="muted">Write a note about your night.</span></button>
+    <button class="card" data-go="reports" style="text-align:left;color:var(--text)"><h3>✧ Weekly report</h3><span class="muted">Review or export your data.</span></button>
+  </div>
+</section>
+
+<section class="page" id="sleep">
+  <h2>Sleep & consistency ☾</h2>
+  <div class="grid two">
+    <div class="card"><h3>Sleep history</h3><div class="empty">No sleep records yet. Real sleep data will appear here.</div></div>
+    <div class="card"><h3>Sleep consistency calendar</h3><div id="calendar" class="grid" style="grid-template-columns:repeat(7,1fr);gap:5px"></div><p class="muted">Calendar dates are shown for navigation. No sleep history has been inferred.</p></div>
+    <div class="card"><h3>Estimated sleep stages</h3><div class="empty">Not available until there is a suitable measurement method. Stages will be labelled as estimates.</div></div>
+    <div class="card"><h3>Bedtime & wake-up patterns</h3><div class="empty">Your trends will appear when enough real records are available.</div></div>
+  </div>
+</section>
+
+<section class="page" id="health">
+  <h2>Heart, oxygen & movement</h2>
+  <div class="grid two">
+    <div class="card"><h3>♡ Heart rate</h3><div class="empty">No heart-rate readings yet.</div><div class="notice">Heart rate means heartbeats per minute. Optical sensors can be affected by movement, fit, and signal quality.</div></div>
+    <div class="card"><h3>✧ Oxygen saturation (SpO₂)</h3><div class="empty">No oxygen readings yet.</div><div class="notice">SpO₂ is an estimate of blood oxygen saturation. Consumer sensors can be inaccurate and cannot diagnose sleep apnea.</div></div>
+    <div class="card"><h3>⌁ Movement</h3><div class="empty">No motion-sensor data yet.</div></div>
+    <div class="card"><h3>◉ Data quality</h3><div class="empty">Quality is unknown until the hardware supplies contact or signal information.</div></div>
+  </div>
+</section>
+
+<section class="page" id="device">
+  <h2>My wristband ⌁</h2>
+  <div class="grid two">
+    <div class="card">
+      <h3>Device status</h3>
+      <div class="row"><span>Wi-Fi</span><b>Not connected</b></div>
+      <div class="row"><span>Sensor contact</span><b>Unknown</b></div>
+      <div class="row"><span>Battery</span><b>Unknown</b></div>
+      <div class="row"><span>Last successful sync</span><b>—</b></div>
+    </div>
+    <div class="card">
+      <h3>Offline recording & recovery</h3>
+      <p class="muted">Planned sync flow:</p>
+      <ol class="muted">
+        <li>Save readings on the wristband when Wi-Fi drops, if storage is available.</li>
+        <li>Reconnect to Wi-Fi.</li>
+        <li>Upload queued readings with original timestamps.</li>
+        <li>Confirm receipt so readings are not duplicated.</li>
+      </ol>
+      <div class="notice">This screen does not simulate a connection. Firmware, local storage, and a secure upload service are still required.</div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="reports">
+  <h2>Reports & insights ✧</h2>
+  <div class="grid two">
+    <div class="card">
+      <h3>Weekly report</h3>
+      <label for="start">From</label><input class="field" type="date" id="start">
+      <label for="end">To</label><input class="field" type="date" id="end">
+      <label class="row"><span>Include journal and mood</span><input type="checkbox" id="includeJournal"></label>
+      <label class="row"><span>Include data-gap notes</span><input type="checkbox" id="includeGaps" checked></label>
+      <div class="actions"><button class="btn" id="csv">Export CSV</button><button class="btn secondary" id="pdf">Save as PDF</button></div>
+      <p class="muted">Journal entries are excluded by default. Sharing is always your choice.</p>
+    </div>
+    <div class="card" id="preview">
+      <h3>Report preview</h3>
+      <p class="muted">No sensor readings are available. This report will not invent sleep duration, heart rate, oxygen, or sleep stages.</p>
+      <div class="notice">SleepTrack does not automatically share reports.</div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="journal">
+  <h2>Journal & goals ☁</h2>
+  <div class="grid two">
+    <div class="card">
+      <h3>How are you feeling?</h3>
+      <label for="mood">Mood</label>
+      <select class="field" id="mood"><option value="">Choose a mood</option><option>Calm</option><option>Happy</option><option>Okay</option><option>Restless</option><option>Tired</option><option>Stressed</option></select>
+      <label for="note">Dream or journal note</label>
+      <textarea class="field" id="note" rows="5" placeholder="Write a note for yourself…"></textarea>
+      <label for="entryDate">Date</label><input class="field" type="date" id="entryDate">
+      <div class="actions"><button class="btn" id="saveNote">Save entry</button></div>
+      <p class="muted">Entries are stored only in this browser. This prototype does not provide encrypted cloud storage.</p>
+    </div>
+    <div class="card">
+      <h3>Your bedtime goal</h3>
+      <label for="bedtime">Target bedtime</label><input class="field" type="time" id="bedtime" value="22:30">
+      <label for="waketime">Target wake-up time</label><input class="field" type="time" id="waketime" value="07:00">
+      <label for="duration">Sleep target</label><select class="field" id="duration"><option>8 hours</option><option>8.5 hours</option><option>9 hours</option><option>7.5 hours</option><option>7 hours</option></select>
+      <div class="actions"><button class="btn" id="saveGoal">Save goal</button></div>
+      <div class="notice">Goals are personal reminders, not medical advice. Streaks should be based on real saved activity, never invented readings.</div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>Recent journal entries</h3><div id="entries" class="empty">No entries yet.</div></div>
+</section>
+
+<section class="page" id="assistant">
+  <h2>Your sleep companion ☄</h2>
+  <div class="grid two">
+    <div class="card">
+      <h3>Ask a sleep question</h3>
+      <textarea class="field" id="question" rows="4" placeholder="Help me create a calming bedtime routine…"></textarea>
+      <div class="actions"><button class="btn" id="ask">Get a suggestion</button></div>
+      <div id="answer" class="notice" hidden></div>
+      <p class="muted">This is a simple local demo, not a connected AI service.</p>
+    </div>
+    <div class="card">
+      <h3>Health-data guide</h3>
+      <p><b>Heart rate:</b> beats per minute; readings can be affected by fit and movement.</p>
+      <p><b>SpO₂:</b> an estimate of blood oxygen; consumer sensor readings may be inaccurate.</p>
+      <p><b>Sleep stages:</b> estimates inferred from available signals, not certainty.</p>
+      <p><b>Missing data:</b> means unavailable, not normal.</p>
+      <div class="notice">SleepTrack cannot diagnose sleep apnea, insomnia, or any other medical condition. Speak with a qualified healthcare professional about health concerns.</div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="settings">
+  <h2>Settings & privacy ⚙</h2>
+  <div class="grid two">
+    <div class="card">
+      <h3>Appearance & comfort</h3>
+      <label for="theme">Theme</label>
+      <select class="field" id="theme"><option value="neutral">Neutral — colorful moonlit calm</option><option value="dreamy">Dreamy — lavender & stars</option><option value="futuristic">Futuristic — neon tech</option></select>
+      <label class="row"><span>Larger text</span><input type="checkbox" id="largeText"></label>
+      <label class="row"><span>Reduce animations</span><input type="checkbox" id="reduceMotion"></label>
+      <label for="quietStart">Quiet hours start</label><input class="field" type="time" id="quietStart" value="22:00">
+      <label for="quietEnd">Quiet hours end</label><input class="field" type="time" id="quietEnd" value="07:00">
+      <div class="actions"><button class="btn" id="saveSettings">Save preferences</button></div>
+      <p class="muted">Quiet hours are saved as preferences only; notifications are not yet scheduled.</p>
+    </div>
+    <div class="card">
+      <h3>Privacy controls</h3>
+      <p class="muted">This prototype has no real account system or backend. Local browser storage is not a secure substitute for private cloud storage.</p>
+      <div class="actions"><button class="btn" id="downloadData">Download my local data</button><button class="btn secondary" id="clearData">Delete journal entries</button></div>
+      <div class="notice">Before public launch, implement secure sign-in, server-side access rules, account-specific records, and tested deletion/export.</div>
+    </div>
+  </div>
+</section>
+
+<footer>☾ SleepTrack · Honest data. Gentle habits. Your privacy matters.</footer>
+</main>
+</div>
+
+<script>
+const pages={
+ overview:"Your night, at your pace ✨",sleep:"Sleep & consistency ☾",
+ health:"Heart & oxygen ♡",device:"My wristband ⌁",
+ reports:"Reports & insights ✧",journal:"Journal & goals ☁",
+ assistant:"Your sleep companion ☄",settings:"Settings & privacy ⚙"
+};
+const $=id=>document.getElementById(id);
+function showPage(name){
+ if(!pages[name])return;
+ document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===name));
+ document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===name));
+ $("heading").textContent=pages[name];
+ history.replaceState(null,"","#"+name);
+ window.scrollTo({top:0,behavior:document.body.classList.contains("reduce-motion")?"auto":"smooth"});
+}
+document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.go)));
+function save(key,value){try{localStorage.setItem("sleeptrack-"+key,JSON.stringify(value));return true}catch(e){alert("Unable to save in this browser.");return false}}
+function read(key,fallback){try{const v=localStorage.getItem("sleeptrack-"+key);return v===null?fallback:JSON.parse(v)}catch(e){return fallback}}
+function setTheme(value){
+ if(!["neutral","dreamy","futuristic"].includes(value))value="neutral";
+ document.body.classList.remove("neutral","dreamy","futuristic");
+ document.body.classList.add(value);$("theme").value=value;save("theme",value);
+}
+$("theme").addEventListener("change",e=>setTheme(e.target.value));
+$("themeButton").addEventListener("click",()=>{
+ const themes=["neutral","dreamy","futuristic"],current=themes.indexOf($("theme").value);
+ setTheme(themes[(current+1)%themes.length]);
+});
+$("today").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
+const today=new Date().toISOString().slice(0,10);
+$("entryDate").value=today;$("end").value=today;
+const weekStart=new Date();weekStart.setDate(weekStart.getDate()-6);
+$("start").value=weekStart.toISOString().slice(0,10);
+function entries(){return read("entries",[])}
+function renderEntries(){
+ const root=$("entries"),items=entries().slice().reverse();root.replaceChildren();
+ if(!items.length){root.className="empty";root.textContent="No entries yet.";return}
+ root.className="";
+ items.forEach(e=>{
+  const item=document.createElement("div");item.className="row";
+  const text=document.createElement("div");
+  const title=document.createElement("b");title.textContent=(e.mood?e.mood+" · ":"")+e.date;
+  const note=document.createElement("p");note.className="muted";note.textContent=e.note||"No written note";
+  text.append(title,note);item.append(text);root.append(item);
+ });
+}
+$("saveNote").addEventListener("click",()=>{
+ const date=$("entryDate").value,mood=$("mood").value,note=$("note").value.trim();
+ if(!date||(!mood&&!note)){alert("Choose a date and add a mood or note.");return}
+ const all=entries();all.push({date,mood,note});
+ if(save("entries",all)){ $("mood").value="";$("note").value="";renderEntries();alert("Entry saved in this browser.");}
+});
+$("saveGoal").addEventListener("click",()=>{
+ save("goal",{bed:$("bedtime").value,wake:$("waketime").value,duration:$("duration").value});
+ alert("Sleep goal saved on this device.");
+});
+$("largeText").addEventListener("change",e=>document.body.classList.toggle("large-text",e.target.checked));
+$("reduceMotion").addEventListener("change",e=>document.body.classList.toggle("reduce-motion",e.target.checked));
+$("saveSettings").addEventListener("click",()=>{
+ save("theme",$("theme").value);
+ save("largeText",$("largeText").checked);
+ save("reduceMotion",$("reduceMotion").checked);
+ save("quietHours",{start:$("quietStart").value,end:$("quietEnd").value});
+ alert("Preferences saved in this browser.");
+});
+function download(filename,content,type){
+ const blob=new Blob([content],{type}),url=URL.createObjectURL(blob);
+ const a=document.createElement("a");a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
+}
+$("csv").addEventListener("click",()=>{
+ const from=$("start").value,to=$("end").value;
+ const notes=$("includeJournal").checked?entries().filter(e=>(!from||e.date>=from)&&(!to||e.date<=to)):[];
+ const rows=[["SleepTrack report"],["From",from],["To",to],
+ ["Sensor status","Not connected"],
+ ["Notice","No real sensor measurements are available; none have been invented."],
+ ["Journal included",$("includeJournal").checked?"Yes":"No"],[],
+ ["Date","Mood","Journal note"]];
+ if($("includeGaps").checked)rows.push(["Data gaps","Sensor not connected; readings unavailable"]);
+ notes.forEach(e=>rows.push([e.date,e.mood,e.note]));
+ const csv=rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
+ download("sleeptrack-report.csv",csv,"text/csv;charset=utf-8");
+});
+$("pdf").addEventListener("click",()=>{
+ const preview=$("preview");preview.replaceChildren();
+ const title=document.createElement("h3");title.textContent="SleepTrack weekly report";
+ const range=document.createElement("p");range.textContent="Date range: "+$("start").value+" to "+$("end").value;
+ const message=document.createElement("p");message.textContent="Wristband status: not connected. No sleep duration, heart rate, oxygen, or sleep-stage measurements are available.";
+ preview.append(title,range,message);
+ if($("includeGaps").checked){const gap=document.createElement("p");gap.textContent="Data gap: no sensor data has been received.";preview.append(gap)}
+ if($("includeJournal").checked){
+  const h=document.createElement("h3");h.textContent="Journal entries (included by your choice)";preview.append(h);
+  entries().filter(e=>(!$("start").value||e.date>=$("start").value)&&(!$("end").value||e.date<=$("end").value)).forEach(e=>{
+   const p=document.createElement("p");p.textContent=e.date+" · "+e.mood+" · "+e.note;preview.append(p);
+  });
+ }
+ const notice=document.createElement("p");notice.textContent="SleepTrack is not a medical device. Sharing is optional.";preview.append(notice);
+ window.print();
+});
+$("downloadData").addEventListener("click",()=>{
+ download("sleeptrack-local-data.json",JSON.stringify({
+  notice:"Browser-local prototype data only; no sensor data or cloud account.",
+  entries:entries(),theme:read("theme","neutral"),goal:read("goal",{})
+ },null,2),"application/json");
+});
+$("clearData").addEventListener("click",()=>{
+ if(confirm("Delete all journal entries saved by this prototype in this browser?")){
+  save("entries",[]);renderEntries();alert("Journal entries deleted.");
+ }
+});
+$("ask").addEventListener("click",()=>{
+ const q=$("question").value.trim();if(!q){alert("Write a question first.");return}
+ const answer=$("answer");answer.hidden=false;
+ answer.textContent=/oxygen|spo2|heart|apnea|insomnia|diagnos|medical/i.test(q)
+ ? "Wearable readings can be uncertain and cannot diagnose a condition. If you have symptoms or health concerns, speak with a qualified healthcare professional."
+ : "Try choosing a consistent wind-down time, dimming bright lights, and doing one relaxing activity before bed. Keep the routine realistic and adjust it gently. This demo cannot see your sensor data.";
+});
+function buildCalendar(){
+ const root=$("calendar");root.replaceChildren();
+ ["S","M","T","W","T","F","S"].forEach(day=>{
+  const el=document.createElement("div");el.textContent=day;el.style.color="var(--muted)";el.style.textAlign="center";root.append(el);
+ });
+ const now=new Date(),first=new Date(now.getFullYear(),now.getMonth(),1).getDay(),days=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+ for(let i=0;i<first;i++)root.append(document.createElement("span"));
+ for(let d=1;d<=days;d++){
+  const el=document.createElement("div");el.textContent=d;el.style.cssText="text-align:center;padding:8px 0;border:1px solid var(--border);border-radius:8px";
+  if(d===now.getDate())el.style.borderColor="var(--accent)";
+  el.title="No sleep data recorded";root.append(el);
+ }
+}
+setTheme(read("theme","neutral"));
+$("largeText").checked=read("largeText",false);document.body.classList.toggle("large-text",$("largeText").checked);
+$("reduceMotion").checked=read("reduceMotion",false);document.body.classList.toggle("reduce-motion",$("reduceMotion").checked);
+const quiet=read("quietHours",{});$("quietStart").value=quiet.start||"22:00";$("quietEnd").value=quiet.end||"07:00";
+const goal=read("goal",{});$("bedtime").value=goal.bed||"22:30";$("waketime").value=goal.wake||"07:00";$("duration").value=goal.duration||"8 hours";
+renderEntries();buildCalendar();
+if(location.hash&&pages[location.hash.slice(1)])showPage(location.hash.slice(1));
+</script>
+</body>
+</html>
